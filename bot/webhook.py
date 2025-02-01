@@ -1,12 +1,13 @@
 from flask import Flask, request, jsonify
 import mercadopago
-from config import MERCADO_PAGO_ACCESS_TOKEN
-import smtplib
-from email.mime.text import MIMEText
-
+import telebot
+import os
+from config import MERCADO_PAGO_ACCESS_TOKEN, TOKEN  # Asegúrate de que config.py tiene TOKEN
 
 app = Flask(__name__)
 sdk = mercadopago.SDK(MERCADO_PAGO_ACCESS_TOKEN)
+bot = telebot.TeleBot(TOKEN)  # Inicializa el bot aquí
+
 
 
 def enviar_email(destinatario, asunto, mensaje):
@@ -50,4 +51,23 @@ def actualizar_estado_pago(payment_id):
         enviar_email(email_proveedor, asunto_proveedor, mensaje_proveedor)
 
     conn.close()
+
+
+
+@app.route("/" + config.TOKEN, methods=["POST"])
+def webhook():
+    json_str = request.get_data().decode("UTF-8")
+    update = telebot.types.Update.de_json(json_str)
+    bot.process_new_updates([update])
+    return "OK", 200
+
+@app.route("/")
+def index():
+    return "Bot en ejecución", 200
+
+
+if __name__ == "__main__":
+    bot.remove_webhook()
+    bot.set_webhook(url=f"https://bot-verduleria.onrender.com/{TOKEN}")
+    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
 
