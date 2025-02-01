@@ -2,10 +2,13 @@ from flask import Flask, request, jsonify
 import mercadopago
 import telebot
 import os
-from config import MERCADO_PAGO_ACCESS_TOKEN, TOKEN  # Asegúrate de que config.py tiene TOKEN
 
 app = Flask(__name__)
-sdk = mercadopago.SDK(MERCADO_PAGO_ACCESS_TOKEN)
+
+
+MERCADO_PAGO_ACCESS_TOKEN = os.getenv("MP_ACCESS_TOKEN")
+TOKEN = os.getenv("BOT_TOKEN")
+
 bot = telebot.TeleBot(TOKEN)  # Inicializa el bot aquí
 
 
