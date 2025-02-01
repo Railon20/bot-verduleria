@@ -1,15 +1,14 @@
+import os
+import telebot
 from flask import Flask, request, jsonify
 import mercadopago
-import telebot
-import os
-
-app = Flask(__name__)
-
 
 MERCADO_PAGO_ACCESS_TOKEN = os.getenv("MP_ACCESS_TOKEN")
-TOKEN = os.getenv("BOT_TOKEN")
+TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 
-bot = telebot.TeleBot(TOKEN)  # Inicializa el bot aquí
+app = Flask(__name__)
+sdk = mercadopago.SDK(MERCADO_PAGO_ACCESS_TOKEN)
+bot = telebot.TeleBot(TOKEN)
 
 
 
@@ -57,7 +56,7 @@ def actualizar_estado_pago(payment_id):
 
 
 
-@app.route("/" + config.TOKEN, methods=["POST"])
+@app.route("/" + TOKEN, methods=["POST"])
 def webhook():
     json_str = request.get_data().decode("UTF-8")
     update = telebot.types.Update.de_json(json_str)
