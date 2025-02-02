@@ -4,7 +4,8 @@ from flask import Flask, request, jsonify
 import mercadopago
 
 MERCADO_PAGO_ACCESS_TOKEN = os.getenv("MP_ACCESS_TOKEN")
-TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
+TOKEN = os.getenv("BOT_TOKEN")
+print(f"DEBUG: TELEGRAM_BOT_TOKEN = {TOKEN}")
 
 app = Flask(__name__)
 sdk = mercadopago.SDK(MERCADO_PAGO_ACCESS_TOKEN)
