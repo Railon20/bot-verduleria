@@ -1,41 +1,34 @@
-import telebot
 import os
-from config import config
+import telebot
 from telebot.types import ReplyKeyboardMarkup, KeyboardButton, InlineKeyboardMarkup, InlineKeyboardButton
 import mysql.connector
-import mercadopago
-from flask import Flask, request
 
 TOKEN = os.getenv("BOT_TOKEN")
+MERCADO_PAGO_ACCESS_TOKEN = os.getenv("MP_ACCESS_TOKEN")
 
 print(f"DEBUG: TELEGRAM_BOT_TOKEN en bot.py = {TOKEN}")
 
 bot = telebot.TeleBot(TOKEN)
 
-MERCADO_PAGO_ACCESS_TOKEN = os.getenv("MP_ACCESS_TOKEN")
-
-
-app = Flask(__name__)
-
-# Función para conectar a la base de datos
+# ✅ Función para conectar a la base de datos
 def conectar_db():
     return mysql.connector.connect(
-        host=config.DB_HOST,
-        user=config.DB_USER,
-        password=config.DB_PASSWORD,
-        database=config.DB_NAME
+        host=os.getenv("DB_HOST"),
+        user=os.getenv("DB_USER"),
+        password=os.getenv("DB_PASSWORD"),
+        database=os.getenv("DB_NAME")
     )
 
-# MENÚ PRINCIPAL
+# ✅ MENÚ PRINCIPAL
 @bot.message_handler(commands=['start'])
 def start(message):
+    print(f"DEBUG: /start recibido de {message.chat.id}")
     markup = ReplyKeyboardMarkup(resize_keyboard=True)
     markup.add(KeyboardButton("🛒 Ordenar"), KeyboardButton("📦 Carritos"))
     markup.add(KeyboardButton("📜 Historial"), KeyboardButton("🚀 Pendientes"))
-
     bot.send_message(message.chat.id, "¡Bienvenido a la tienda de verdulería! ¿Qué deseas hacer?", reply_markup=markup)
 
-# MOSTRAR PRODUCTOS DISPONIBLES
+# ✅ MOSTRAR PRODUCTOS DISPONIBLES
 @bot.message_handler(func=lambda message: message.text == "🛒 Ordenar")
 def mostrar_productos(message):
     conn = conectar_db()
@@ -53,6 +46,9 @@ def mostrar_productos(message):
         markup.add(InlineKeyboardButton(nombre, callback_data=f"producto_{prod_id}"))
 
     bot.send_message(message.chat.id, "Selecciona un producto para ver detalles:", reply_markup=markup)
+
+print("DEBUG: Handlers del bot cargados correctamente.")  # 📌 Asegura que los handlers están registrados
+
 
 # MOSTRAR DETALLE DEL PRODUCTO SELECCIONADO
 @bot.callback_query_handler(func=lambda call: call.data.startswith("producto_"))
@@ -137,7 +133,7 @@ def agregar_a_carrito_existente(call):
 
     bot.send_message(call.message.chat.id, "✅ Producto añadido al carrito.")
 
-    @bot.message_handler(func=lambda message: message.text == "📦 Carritos")
+@bot.message_handler(func=lambda message: message.text == "📦 Carritos")
 def mostrar_carritos(message):
     conn = conectar_db()
     cursor = conn.cursor()
@@ -291,7 +287,7 @@ def generar_link_pago(carrito_id, user_id):
             "unit_price": round(subtotal, 2)
         })
 
-    sdk = mercadopago.SDK(MERCADO_PAGO_ACCESS_TOKEN)
+    
 
     preference_data = {
         "items": items,
@@ -310,7 +306,7 @@ def generar_link_pago(carrito_id, user_id):
     preference_response = sdk.preference().create(preference_data)
     return preference_response["response"]["init_point"]
 
-    @bot.callback_query_handler(func=lambda call: call.data.startswith("pagar_carrito_"))
+@bot.callback_query_handler(func=lambda call: call.data.startswith("pagar_carrito_"))
 def pagar_carrito(call):
     carrito_id = int(call.data.split("_")[2])
     user_id = call.message.chat.id

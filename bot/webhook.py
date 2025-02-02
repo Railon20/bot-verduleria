@@ -1,17 +1,11 @@
 import os
 import telebot
-from flask import Flask, request, jsonify
+from flask import Flask, request
 import mercadopago
-
-MERCADO_PAGO_ACCESS_TOKEN = os.getenv("MP_ACCESS_TOKEN")
-TOKEN = os.getenv("BOT_TOKEN")
-print(f"DEBUG: TELEGRAM_BOT_TOKEN = {TOKEN}")
+from config import TOKEN, MERCADO_PAGO_ACCESS_TOKEN
+import bot  # ✅ Importa el bot correctamente (ejecuta los handlers)
 
 app = Flask(__name__)
-sdk = mercadopago.SDK(MERCADO_PAGO_ACCESS_TOKEN)
-bot = telebot.TeleBot(TOKEN)
-
-
 
 def enviar_email(destinatario, asunto, mensaje):
     smtp_server = "smtp.gmail.com"
@@ -56,21 +50,23 @@ def actualizar_estado_pago(payment_id):
     conn.close()
 
 
-
-@app.route("/" + TOKEN, methods=["POST"])
+# ✅ Configurar el webhook de Telegram
+@app.route(f"/{TOKEN}", methods=["POST"])
 def webhook():
     json_str = request.get_data().decode("UTF-8")
     update = telebot.types.Update.de_json(json_str)
-    bot.process_new_updates([update])
+    bot.bot.process_new_updates([update])  # ✅ Procesa actualizaciones usando bot.bot
     return "OK", 200
 
+# ✅ Página de inicio para verificar que el bot está en ejecución
 @app.route("/")
 def index():
-    return "Bot en ejecución", 200
-
+    return "Bot en ejecución correctamente 🚀", 200
 
 if __name__ == "__main__":
-    bot.remove_webhook()
-    bot.set_webhook(url=f"https://bot-verduleria.onrender.com/{TOKEN}")
-    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
+    bot.bot.remove_webhook()
+    bot.bot.set_webhook(url=f"https://bot-verduleria.onrender.com/{TOKEN}")
 
+    port = int(os.environ.get("PORT", 5000))
+    print(f"DEBUG: Iniciando Flask en puerto {port}")
+    app.run(host="0.0.0.0", port=port)
