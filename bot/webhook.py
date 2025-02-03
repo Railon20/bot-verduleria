@@ -18,9 +18,21 @@ app = Flask(__name__)
 @app.route(f"/{TOKEN}", methods=["POST"])
 def webhook():
     json_str = request.get_data().decode("UTF-8")
-    update = telebot.types.Update.de_json(json_str)
-    bot.process_new_updates([update])  # ✅ No es necesario llamar a `bot.bot`
+    print(f"DEBUG: Recibido JSON de Telegram: {json_str}")  # 📌 Verifica que los datos lleguen bien
+
+    try:
+        update = telebot.types.Update.de_json(json_str)
+        if update:
+            print("DEBUG: Update correctamente deserializado")  # 📌 Asegura que no hay problema con la conversión
+        
+        bot.process_new_updates([update])  # 📌 Prueba llamar a bot directamente
+        print("DEBUG: bot.process_new_updates ejecutado con éxito")  # 📌 Confirma que el bot lo procesó
+    except Exception as e:
+        print(f"ERROR en webhook: {str(e)}")  # 📌 Registra cualquier error en Render
+        return "Error interno", 500
+
     return "OK", 200
+
 
 # ✅ Página de inicio para verificar que el bot está en ejecución
 @app.route("/")
