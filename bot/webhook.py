@@ -2,7 +2,8 @@ import os
 import telebot
 from flask import Flask, request
 import mercadopago
-import bot  # ✅ Importa el bot correctamente (ejecuta los handlers)
+from bot import bot  # Asegura que 'bot' es accesible como un módulo
+  # ✅ Importa el bot correctamente (ejecuta los handlers)
 
 app = Flask(__name__)
 
