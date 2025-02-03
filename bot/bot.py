@@ -321,10 +321,3 @@ def pagar_carrito(call):
 
     bot.send_message(user_id, f"💳 Paga tu pedido aquí:\n{link_pago}")
 
-
-bot.set_my_commands([
-    telebot.types.BotCommand("start", "Iniciar el bot"),
-    telebot.types.BotCommand("registrar", "Registrar usuario")
-])
-
-print("Comandos registrados correctamente.")
