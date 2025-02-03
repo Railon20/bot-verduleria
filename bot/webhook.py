@@ -25,6 +25,7 @@ def webhook():
         if update:
             print("DEBUG: Update correctamente deserializado")  # 📌 Asegura que no hay problema con la conversión
         
+        print(f"DEBUG: Comandos del bot registrados: {bot.get_my_commands()}")
         bot.process_new_updates([update])  # 📌 Prueba llamar a bot directamente
         print("DEBUG: bot.process_new_updates ejecutado con éxito")  # 📌 Confirma que el bot lo procesó
     except Exception as e:

@@ -22,6 +22,7 @@ def conectar_db():
 # ✅ MENÚ PRINCIPAL
 @bot.message_handler(commands=['start'])
 def start(message):
+    print(f"DEBUG: /start recibido de {message.chat.id}")  # 📌 Verificación
     print(f"DEBUG: /start recibido de {message.chat.id}")
     markup = ReplyKeyboardMarkup(resize_keyboard=True)
     markup.add(KeyboardButton("🛒 Ordenar"), KeyboardButton("📦 Carritos"))
