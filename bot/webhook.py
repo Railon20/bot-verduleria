@@ -10,6 +10,7 @@ if not TOKEN:
     raise ValueError("ERROR: BOT_TOKEN no está definido en las variables de entorno.")
 
 WEBHOOK_URL = os.getenv("WEBHOOK_URL")  # La URL pública en Render
+print(f"DEBUG: WEBHOOK_URL = {WEBHOOK_URL}")
 
 app = Flask(__name__)
 
