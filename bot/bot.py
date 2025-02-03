@@ -6,7 +6,7 @@ import mysql.connector
 TOKEN = os.getenv("BOT_TOKEN")
 MERCADO_PAGO_ACCESS_TOKEN = os.getenv("MP_ACCESS_TOKEN")
 
-print(f"DEBUG: TELEGRAM_BOT_TOKEN en bot.py = {TOKEN}")
+
 
 bot = telebot.TeleBot(TOKEN)
 

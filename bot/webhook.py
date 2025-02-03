@@ -2,7 +2,8 @@ import os
 import telebot
 from flask import Flask, request
 import mercadopago
-from bot import bot  # ✅ Importa el bot correctamente
+from bot.bot import bot  # Importa explícitamente el objeto 'bot' del módulo bot.py
+  # ✅ Importa el bot correctamente
 
 TOKEN = os.getenv("BOT_TOKEN")  # ✅ Definir el token antes de usarlo
 if not TOKEN:
