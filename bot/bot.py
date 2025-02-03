@@ -10,6 +10,8 @@ MERCADO_PAGO_ACCESS_TOKEN = os.getenv("MP_ACCESS_TOKEN")
 
 bot = telebot.TeleBot(TOKEN)
 
+
+
 # ✅ Función para conectar a la base de datos
 def conectar_db():
     return mysql.connector.connect(
@@ -319,3 +321,10 @@ def pagar_carrito(call):
 
     bot.send_message(user_id, f"💳 Paga tu pedido aquí:\n{link_pago}")
 
+
+bot.set_my_commands([
+    telebot.types.BotCommand("start", "Iniciar el bot"),
+    telebot.types.BotCommand("registrar", "Registrar usuario")
+])
+
+print("Comandos registrados correctamente.")
